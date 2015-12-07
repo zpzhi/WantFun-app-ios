@@ -19,8 +19,9 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
     var sections = Dictionary<String, Array< Event >>()
     var sortedSections = [String]()
     
-    @IBOutlet weak var menuButton: UIBarButtonItem!
+    //@IBOutlet weak var menuButton: UIBarButtonItem!
     @IBOutlet var tableview: UITableView!
+    @IBOutlet weak var menuButton: UIBarButtonItem!
     
     enum ErrorHandler:ErrorType
     {
@@ -31,12 +32,18 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
         super.viewDidLoad()
         
         if self.revealViewController() != nil {
-            //menuButton.target = self.revealViewController()
-            //menuButton.action = "revealToggle:"
+            menuButton.target = self.revealViewController()
+            menuButton.action = "revealToggle:"
             self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
         
         get_data_from_url("\(serverUrl)get-events.php")
+        
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+
+        tableview.reloadData()
     }
     
     
@@ -48,9 +55,9 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
         
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
-        let postString = "start=0&limit=5&city=襄阳市"
+        let postString = "start=0&limit=100&city=all"
         request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
-        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
+        //request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
         
         let task = session.dataTaskWithRequest(request) {
             (
@@ -101,6 +108,8 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
                 do_table_refresh()
                 
             }
+            let count = eventsData.count
+            print ("the total number of events: \(count)")
             
         }
         catch let error as NSError {
@@ -120,12 +129,12 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
     }
     
     func groupEventsByDate(){
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        
         for event in eventsData{
             let t = event.eventTime
-            let date = t[t.startIndex.advancedBy(0)...t.startIndex.advancedBy(9)].toDateTime()
-            let string = dateFormatter.stringFromDate(date)
+            //let date = t[t.startIndex.advancedBy(0)...t.startIndex.advancedBy(9)].toDateTime()
+            //let string = dateFormatter.stringFromDate(date)
+            let string = t[t.startIndex.advancedBy(0)...t.startIndex.advancedBy(9)]
             
             if self.sections.indexForKey(string) == nil {
                 self.sections[string] = [event]
@@ -157,7 +166,12 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
     }
     
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sortedSections[section]
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = NSDateFormatterStyle.FullStyle
+        let date = sortedSections[section].toDateTime()
+        let reformSectionHeader = dateFormatter.stringFromDate(date)
+        
+        return reformSectionHeader
     }
 
     
@@ -271,6 +285,14 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
         // Pass the selected object to the new view controller.
     }
     */
+    
+    @IBAction func unwindToEventList(sender: UIStoryboardSegue) {
+        eventsData.removeAll()
+        sections.removeAll()
+        sortedSections.removeAll()
+        get_data_from_url("\(serverUrl)get-events.php")
+
+    }
     
 
 }

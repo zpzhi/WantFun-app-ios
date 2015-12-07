@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "BA439E63EB4391079752C5CD9622DF4C2095E7D8",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "BA439E63EB4391079752C5CD9622DF4C2095E7D8" : 0,
+    "4D550DC6645A2D267DF4532601E4BDE9A01193F4" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "143CB4D9-D49A-4C05-8BE5-44B486E1D120",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "BA439E63EB4391079752C5CD9622DF4C2095E7D8" : "WantFun-app-ios\/",
+    "4D550DC6645A2D267DF4532601E4BDE9A01193F4" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "WantFun",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "WantFun.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/zpzhi\/WantFun---ios-app.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "4D550DC6645A2D267DF4532601E4BDE9A01193F4"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/zpzhi\/WantFun-app-ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "BA439E63EB4391079752C5CD9622DF4C2095E7D8"
+    }
+  ]
+}
