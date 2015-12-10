@@ -471,6 +471,8 @@ class AddEventViewController: UIViewController, UIPickerViewDataSource, UIPicker
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject])
     {
         selectedImage=info[UIImagePickerControllerOriginalImage] as? UIImage
+        //selectedImage = Helper.rotateCameraImageToProperOrientation(selectedImage!, maxResolution: 320)
+        selectedImage = UIImage(CGImage: selectedImage!.CGImage!, scale: 1, orientation: selectedImage!.imageOrientation)
         
         // Set photoImageView to display the selected image.
         photoImageView.image = selectedImage

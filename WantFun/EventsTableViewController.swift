@@ -70,7 +70,9 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
             
             dispatch_async(dispatch_get_main_queue(), {
                 let json = NSString(data: data!, encoding: NSASCIIStringEncoding)
-                self.extract_json(json!)
+                if (json != "[]" && json != nil){
+                    self.extract_json(json!)
+                }
                 return
             })
             
@@ -95,21 +97,38 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
                         {
                             let id = data_block["id"] as! String
                             let title = data_block["title"] as! String
-                            let image = data_block["image_thumb"] as? String
+                            let thumbImage = data_block["image_thumb"] as? String
+                            let image = data_block["image_name"] as? String
                             let eventType = data_block["activity_type"] as! String
                             let eventTime = data_block["activity_time"] as! String
+                            let location = data_block["activity_address"] as! String
+                            let city = data_block["city"] as! String
+                            let state = data_block["state"] as! String
+                            let eventCreator = data_block["event_creator"] as! String
+                            let description = data_block["activity_detail"] as! String
+                            let phoneNumber = data_block["phone_number"] as! String
+                            let duration = data_block["activity_duration"] as! String
                             
-                            let event:Event = Event(id:id, title:title, photoName:(image!), eventType:eventType)!
+                            let event:Event = Event(id:id, title:title, eventType:eventType)!
                             event.eventTime = eventTime
+                            event.thumbImageName = thumbImage
+                            event.imageName = image
+                            event.location = location
+                            event.city = city
+                            event.state = state
+                            event.eventCreator = eventCreator
+                            event.description = description
+                            event.phoneNumber = phoneNumber
+                            event.duration = duration
+                            
                             eventsData.append(event)
+                            
                         }
                 }
                     
                 do_table_refresh()
                 
             }
-            let count = eventsData.count
-            print ("the total number of events: \(count)")
             
         }
         catch let error as NSError {
@@ -156,12 +175,12 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
+
         return sections.count
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
+
         return sections[sortedSections[section]]!.count
     }
     
@@ -184,7 +203,7 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
         cell.nameLabel.text = event.title
         var image:UIImage?
         
-        if (event.photoName == nil || event.photoName == "")
+        if (event.thumbImageName == nil || event.thumbImageName == "")
         {
             if event.eventType == "0"{
                 image = UIImage(named: "festivalSample")!
@@ -219,7 +238,7 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
         }
         else
         {
-            let imageName = (event.photoName)!
+            let imageName = (event.thumbImageName)!
             let imageUrl = "\(serverUrl)imgupload/activity_thumb_image/\(imageName)"
             //cell.imageView!.downloadedFrom(link: imageUrl, contentMode:.ScaleToFill)
             
@@ -276,15 +295,25 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if ( segue.identifier == "ShowEventDetailSegue") {
+            let row = self.tableView.indexPathForSelectedRow!.row
+            let section = self.tableView.indexPathForSelectedRow!.section
+            
+            let eventSection = sections[sortedSections[section]]
+            let event = eventSection![row]
+     
+            let nav = segue.destinationViewController as! UINavigationController
+            let destinationVC = nav.topViewController as! EventDetailViewController
+                
+            destinationVC.selectedEvent = event
+        }
     }
-    */
+    
     
     @IBAction func unwindToEventList(sender: UIStoryboardSegue) {
         eventsData.removeAll()
