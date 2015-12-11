@@ -323,6 +323,10 @@ class EventsTableViewController: UITableViewController, NSFetchedResultsControll
 
     }
     
+    @IBAction func unwindByBackButtonFromEventDetail(sender: UIStoryboardSegue) {
+        
+    }
+    
 
 }
 

@@ -17,6 +17,7 @@ class User {
     var phoneNumber: String?
     var realName: String?
     var description: String?
+    var profileImage: UIImage?
 
     
     // Mark: Initialization

@@ -16,10 +16,13 @@ class ProfileTableViewController: UITableViewController {
     @IBOutlet weak var profileUserName: UILabel!
     @IBOutlet var eventsTableView: UITableView!
     
-    let loginId: String = "10"
-    let loginUserName: String = "easonlove"
+    let loginId: String = "11"
+    let loginUserName: String = "ctester"
+    //let loginId: String = "10"
+    //let loginUserName: String = "easonlove"
+    
     let serverUrl = "http://meetup.wcpsjshxnna.com/meetup-web/"
-    var profileDetial: User?
+    var profileDetail: User?
     var joinedEvents:Array< Event > = Array < Event >()
     var publishedEvents:Array< Event > = Array < Event >()
 
@@ -97,20 +100,22 @@ class ProfileTableViewController: UITableViewController {
                         let phoneNumber = data_block["phone_number"] as? String
                         let userDescription = data_block["user_description"] as? String
                         
-                        profileDetial = User(id: id)!
-                        profileDetial!.name = username ?? ""
-                        profileDetial!.photoName = phoneNumber ?? ""
-                        profileDetial!.realName = realName ?? ""
-                        profileDetial!.description = userDescription ?? ""
+                        profileDetail = User(id: id)!
+                        profileDetail!.name = username ?? ""
+                        profileDetail!.photoName = phoneNumber ?? ""
+                        profileDetail!.realName = realName ?? ""
+                        profileDetail!.description = userDescription ?? ""
+                        profileDetail!.phoneNumber = phoneNumber ?? ""
                         
                         if (thumb != nil && thumb != "NULL"){
-                            profileDetial?.photoName = image!
-                            profileDetial?.thumbnailName = thumb!
+                            profileDetail?.photoName = image!
+                            profileDetail?.thumbnailName = thumb!
                             
                             getImageFromServer(image!, imageView: profileImage, folder: "user_image", flag: 0)
                         }else{
                             
                             let image = UIImage(named: "defaultUser")!
+                            profileDetail?.profileImage = image
                             let imageLayer: CALayer?  = profileImage.layer
                             imageLayer!.cornerRadius = profileImage.frame.size.width/2
                             imageLayer!.masksToBounds = true
@@ -355,6 +360,7 @@ class ProfileTableViewController: UITableViewController {
                     imageView.image = image
                     //imageView.contentMode = UIViewContentMode.ScaleAspectFill
                     if (flag == 0){
+                    self.profileDetail?.profileImage = image!
                     imageView.layer.borderWidth = 1
                     imageView.layer.masksToBounds = false
                     imageView.layer.borderColor = UIColor.blackColor().CGColor
@@ -481,14 +487,60 @@ class ProfileTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if ( segue.identifier == "ShowEditProfileSegue") {
+            
+            let nav = segue.destinationViewController as! UINavigationController
+            let destinationVC = nav.topViewController as! EditProfileTableViewController
+            
+            destinationVC.profileDetail = self.profileDetail
+        }
+        
+        if ( segue.identifier == "ShowEventDetailSegue") {
+            
+            let row = self.tableView.indexPathForSelectedRow!.row
+            let section = self.tableView.indexPathForSelectedRow!.section
+            
+            let destinationVC = segue.destinationViewController as! EventDetailViewController
+            
+            let event:Event?
+            if (section == 0){
+                event = self.joinedEvents[row]
+                destinationVC.selectedEvent = event!
+            }
+            else if (section == 1){
+                event = self.publishedEvents[row]
+                destinationVC.selectedEvent = event!
+            }
+        }
+        
     }
-    */
+    
+    @IBAction func unwindToUserProfilePage(sender: UIStoryboardSegue) {
+        // Update the user image only
+        let destinationVC = sender.sourceViewController as! EditProfileTableViewController
+        if (destinationVC.selectedImage != nil){
+            profileImage.image = destinationVC.selectedImage
+        }
+        
+        let description = destinationVC.descriptionTextView.text ?? ""
+        profileDetail?.description = description
+        
+        let realname = destinationVC.realNameTextField.text ?? ""
+        profileDetail?.realName = realname
+        
+        let phonenumber = destinationVC.phoneNumberTextField.text ?? ""
+        profileDetail?.phoneNumber = phonenumber
+        
+        
+    }
+    
+    @IBAction func unwindByBackButtonFromEventDetail(sender: UIStoryboardSegue) {
+        
+    }
 
 }

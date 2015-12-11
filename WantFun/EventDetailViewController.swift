@@ -20,6 +20,8 @@ class EventDetailViewController: UITableViewController {
     @IBOutlet weak var eventLocation: UILabel!
     @IBOutlet weak var eventDescription: UITextView!
     @IBOutlet weak var joinButton: UIBarButtonItem!
+    @IBOutlet weak var backButton: UIBarButtonItem!
+    
     
     var selectedEvent : Event?
     let serverUrl = "http://meetup.wcpsjshxnna.com/meetup-web/"
@@ -43,6 +45,18 @@ class EventDetailViewController: UITableViewController {
         if selectedEvent != nil{
             eventTitle.text = selectedEvent?.title
             eventTime.text = selectedEvent?.eventTime
+            
+            let dateFormatter = NSDateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let eventDate = dateFormatter.dateFromString(eventTime.text!)! as NSDate
+        
+            let currentDate : NSDate = NSDate()
+            
+            let compareResult = currentDate.compare(eventDate)
+            if compareResult == NSComparisonResult.OrderedDescending {
+                joinButton.title = ""
+                joinButton.enabled = false
+            }
             
             let state = selectedEvent?.state
             var location = selectedEvent?.location
@@ -515,19 +529,17 @@ class EventDetailViewController: UITableViewController {
         }
     }
     
-    
-    @IBAction func back(sender: UIBarButtonItem) {
-        dismissViewControllerAnimated(true, completion: nil)
-    }
 
-    /*
+
+
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+        if sender === backButton{
+            
+        }
     }
-    */
+
 
 }

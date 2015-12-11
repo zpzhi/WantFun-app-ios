@@ -119,11 +119,6 @@ class AddEventViewController: UIViewController, UIPickerViewDataSource, UIPicker
             
         }
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     // MARK: UITextFieldDelegate
     func textFieldDidBeginEditing(textField: UITextField) {
@@ -534,7 +529,7 @@ class AddEventViewController: UIViewController, UIPickerViewDataSource, UIPicker
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let postTime = dateFormatter.stringFromDate(NSDate())
         
-        var params = "easonlove=easonlove&loginUserId=10"
+        var params = "loginUser=easonlove&loginUserId=10"
         params = params + "&activityTime=" + datePicker.text!
         params = params + ":00"
         params = params + "&postTime=" + postTime
