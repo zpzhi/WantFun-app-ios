@@ -222,8 +222,9 @@ class EditProfileTableViewController: UITableViewController, UITextFieldDelegate
         }
         else
         {
-            let alertWarning = UIAlertView(title:"Warning", message: "You don't have camera", delegate:nil, cancelButtonTitle:"OK", otherButtonTitles:"")
-            alertWarning.show()
+            let alert = UIAlertController(title: "Warning", message:"You don't have camera", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .Default) { _ in })
+            self.presentViewController(alert, animated: true){}
         }
     }
     

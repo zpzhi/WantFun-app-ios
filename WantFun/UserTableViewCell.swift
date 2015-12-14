@@ -14,6 +14,10 @@ class UserTableViewCell: UITableViewCell {
     @IBOutlet weak var userName: UILabel!
     @IBOutlet weak var thumbUserImageView: UIImageView!
     
+    @IBOutlet weak var followingUserName: UILabel!
+    
+    @IBOutlet weak var followingUserThumbImageView: UIImageView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

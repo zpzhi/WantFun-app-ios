@@ -27,7 +27,7 @@ class EventDetailViewController: UITableViewController {
     let serverUrl = "http://meetup.wcpsjshxnna.com/meetup-web/"
     var eventCreator: String?
     var hostUser : User?
-    let loginUserId = "11"
+    let loginUserId = "1"
     var joinedUsers:Array< User > = Array < User >()
 
     override func viewDidLoad() {
@@ -184,16 +184,24 @@ class EventDetailViewController: UITableViewController {
                 for item in items
                 {
                     if let data_block = item as? NSDictionary
-                    {
+                    {let image = data_block["image_name"] as? String
+                        let realName = data_block["name"] as? String
+                        let phoneNumber = data_block["phone_number"] as? String
+                        let userDescription = data_block["user_description"] as? String
+                        
                         let id = data_block["id_user"] as! String
                         let username = data_block["username"] as! String
                         let thumb = data_block["image_thumb"] as? String
                         
                         hostUser = User(id: id)!
                         hostUser!.name = username ?? ""
+                        hostUser!.phoneNumber = phoneNumber ?? ""
+                        hostUser!.realName = realName ?? ""
+                        hostUser!.description = userDescription ?? ""
+                        hostUser!.phoneNumber = phoneNumber ?? ""
                         if (thumb != nil && thumb != "NULL"){
-                            hostUser?.photoName = thumb!
-                            hostUser?.thumbnailName = thumb!
+                            hostUser!.photoName = image!
+                            hostUser!.thumbnailName = thumb!
                         }
                         
                     }
@@ -267,16 +275,27 @@ class EventDetailViewController: UITableViewController {
                     for iner_item in innerArray{
                     if let data_block = iner_item as? NSDictionary
                     {
+                        
+                        let image = data_block["image_name"] as? String
+                        let realName = data_block["name"] as? String
+                        let phoneNumber = data_block["phone_number"] as? String
+                        let userDescription = data_block["user_description"] as? String
+                        
                         let id = data_block["id_user"] as! String
                         let username = data_block["username"] as! String
                         let thumb = data_block["image_thumb"] as? String
                         
                         let user = User(id: id)!
                         user.name = username ?? ""
+                        user.phoneNumber = phoneNumber ?? ""
+                        user.realName = realName ?? ""
+                        user.description = userDescription ?? ""
+                        user.phoneNumber = phoneNumber ?? ""
                         if (thumb != nil && thumb != "NULL"){
-                            user.photoName = thumb!
+                            user.photoName = image!
                             user.thumbnailName = thumb!
                         }
+
                         joinedUsers.append(user)
                         
                         if (id == loginUserId){
@@ -538,6 +557,21 @@ class EventDetailViewController: UITableViewController {
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if sender === backButton{
             
+        }
+        
+        if segue.identifier == "ShowUserProfileSegue"{
+            let row = self.tableView.indexPathForSelectedRow!.row
+            let section = self.tableView.indexPathForSelectedRow!.section
+            
+            let dVC = segue.destinationViewController as! UINavigationController
+            let destinationVC = dVC.topViewController as! ProfileTableViewController
+            if (section == 0){
+                destinationVC.profileDetail = hostUser!
+            }
+            else if (section == 1){
+                destinationVC.profileDetail = joinedUsers[row]
+            }
+
         }
     }
 

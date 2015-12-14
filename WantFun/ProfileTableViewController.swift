@@ -16,8 +16,10 @@ class ProfileTableViewController: UITableViewController {
     @IBOutlet weak var profileUserName: UILabel!
     @IBOutlet var eventsTableView: UITableView!
     
-    let loginId: String = "11"
-    let loginUserName: String = "ctester"
+    var loginId: String?
+    var loginUserName: String?
+    var pageUserName: String?
+    var pageUserId: String?
     //let loginId: String = "10"
     //let loginUserName: String = "easonlove"
     
@@ -25,21 +27,74 @@ class ProfileTableViewController: UITableViewController {
     var profileDetail: User?
     var joinedEvents:Array< Event > = Array < Event >()
     var publishedEvents:Array< Event > = Array < Event >()
+    var leftBarButtonItem : UIBarButtonItem!
+    var rightBarButtonItem : UIBarButtonItem!
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+        let prefs:NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        let isLoggedIn:Int = prefs.integerForKey("ISLOGGEDIN") as Int
+        if (isLoggedIn != 1) {
+            //self.performSegueWithIdentifier("goto_login", sender: self)
+            print ("Haven't login")
+        } else {
+            loginId = (prefs.valueForKey("USERID") as? String)!
+            loginUserName = (prefs.valueForKey("USERNAME") as? String)!
+            
+            if (profileDetail == nil){
+                self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
+                pageUserName = loginUserName
+                pageUserId = loginId
+                get_UserDetail_from_url("\(serverUrl)get-user-detail.php")
+                self.navigationItem.leftBarButtonItem = nil
+                
+            }
+            else{
+                pageUserName = profileDetail?.name
+                pageUserId = profileDetail?.id
+                
+                checkIfFriend("\(serverUrl)check-friend.php")
+                
+                changeBarButtonItemText()
+                displayUserPhotoAndUserName()
+                
+                
+            }
+            
+            get_joinedEvents_from_url("\(serverUrl)get-events-by-user.php")
+            get_publishedEvents_from_url("\(serverUrl)list-hosting-events-by-user.php")
+        }
         
-        get_UserDetail_from_url("\(serverUrl)get-user-detail.php")
-        get_joinedEvents_from_url("\(serverUrl)get-events-by-user.php")
-        get_publishedEvents_from_url("\(serverUrl)list-hosting-events-by-user.php")
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    
+    func changeBarButtonItemText(){
+        self.leftBarButtonItem = UIBarButtonItem(title: "Back", style: UIBarButtonItemStyle.Plain, target: self, action: "back:")
+        self.navigationItem.leftBarButtonItem = self.leftBarButtonItem
+        
+        if (pageUserId != loginId){
+            self.rightBarButtonItem = UIBarButtonItem(title: "Unfollow", style: UIBarButtonItemStyle.Plain, target: self, action: "performDifferentSegueByButtonText:")
+            self.navigationItem.rightBarButtonItem = self.rightBarButtonItem
+        }
+        
+    }
+    
+    func displayUserPhotoAndUserName(){
+        if (profileDetail?.photoName != nil && !profileDetail!.photoName!.isEmpty){
+            getImageFromServer((profileDetail?.photoName!)!, imageView: profileImage, folder: "user_image", flag: 0)
+        }else{
+            
+            let image = UIImage(named: "defaultUser")!
+            profileDetail?.profileImage = image
+            let imageLayer: CALayer?  = profileImage.layer
+            imageLayer!.cornerRadius = profileImage.frame.size.width/2
+            imageLayer!.masksToBounds = true
+            profileImage.image = image
+        }
+        
+        profileUserName.text =  profileDetail?.name
     }
 
     
@@ -53,7 +108,7 @@ class ProfileTableViewController: UITableViewController {
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         
-        let postString = "userName=\(loginUserName)"
+        let postString = "userName=\(pageUserName!)"
         request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
         request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
         
@@ -102,10 +157,9 @@ class ProfileTableViewController: UITableViewController {
                         
                         profileDetail = User(id: id)!
                         profileDetail!.name = username ?? ""
-                        profileDetail!.photoName = phoneNumber ?? ""
+                        profileDetail!.phoneNumber = phoneNumber ?? ""
                         profileDetail!.realName = realName ?? ""
                         profileDetail!.description = userDescription ?? ""
-                        profileDetail!.phoneNumber = phoneNumber ?? ""
                         
                         if (thumb != nil && thumb != "NULL"){
                             profileDetail?.photoName = image!
@@ -135,6 +189,46 @@ class ProfileTableViewController: UITableViewController {
         }
     }
     
+    func checkIfFriend(url:String)
+    {
+        
+        let url:NSURL = NSURL(string: url)!
+        let session = NSURLSession.sharedSession()
+        
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        
+        var postString = "userName=\(loginUserName)"
+        postString = postString+"&otherUserName=\(pageUserName!)"
+        request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
+        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
+        
+        let task = session.dataTaskWithRequest(request) {
+            (
+            let data, let response, let error) in
+            
+            guard let _:NSData = data, let _:NSURLResponse = response  where error == nil else {
+                print("error")
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                let response = NSString(data: data!, encoding: NSASCIIStringEncoding)
+                if (response == "0"){
+                    self.rightBarButtonItem.title = "Follow"
+                }else if(response == "1"){
+                    self.rightBarButtonItem.title = "Unfollow"
+                }
+                return
+            })
+            
+        }
+        
+        task.resume()
+        
+    }
+    
+    
     func get_joinedEvents_from_url(url:String)
     {
         
@@ -144,7 +238,7 @@ class ProfileTableViewController: UITableViewController {
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         
-        let postString = "userId=\(loginId)"
+        let postString = "userId=\(pageUserId!)"
         request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
         request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
         
@@ -251,7 +345,7 @@ class ProfileTableViewController: UITableViewController {
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "POST"
         
-        let postString = "userId=\(loginId)"
+        let postString = "userId=\(pageUserId!)"
         request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
         request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
         
@@ -375,6 +469,84 @@ class ProfileTableViewController: UITableViewController {
                 }
             }).resume()
         }
+        
+    }
+    
+    func addFriendCall_from_url(url:String){
+        
+        let url:NSURL = NSURL(string: url)!
+        let session = NSURLSession.sharedSession()
+        
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        
+        var postString = "userName=\(loginUserName)"
+        postString = postString+"&otherUserName=\(pageUserName!)"
+        request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
+        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
+        
+        let task = session.dataTaskWithRequest(request) {
+            (
+            let data, let response, let error) in
+            
+            guard let _:NSData = data, let _:NSURLResponse = response  where error == nil else {
+                print("error")
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                let response = NSString(data: data!, encoding: NSASCIIStringEncoding)
+                if (response != nil && response == "success"){
+                    self.rightBarButtonItem.title = "Unfollow"
+                    
+                }else {
+                    print ("Follow user cal failed")
+                }
+                return
+            })
+            
+        }
+        
+        task.resume()
+        
+    }
+    
+    func removeFriendCall_from_url(url:String){
+        
+        let url:NSURL = NSURL(string: url)!
+        let session = NSURLSession.sharedSession()
+        
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        
+        var postString = "userName=\(loginUserName)"
+        postString = postString+"&otherUserName=\(pageUserName!)"
+        request.HTTPBody = postString.dataUsingEncoding(NSUTF8StringEncoding)
+        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringCacheData
+        
+        let task = session.dataTaskWithRequest(request) {
+            (
+            let data, let response, let error) in
+            
+            guard let _:NSData = data, let _:NSURLResponse = response  where error == nil else {
+                print("error")
+                return
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                let response = NSString(data: data!, encoding: NSASCIIStringEncoding)
+                if (response != nil && response == "success"){
+                    self.rightBarButtonItem.title = "Follow"
+                    
+                }else {
+                    print ("Unfollow user cal failed")
+                }
+                return
+            })
+            
+        }
+        
+        task.resume()
         
     }
 
@@ -541,6 +713,26 @@ class ProfileTableViewController: UITableViewController {
     
     @IBAction func unwindByBackButtonFromEventDetail(sender: UIStoryboardSegue) {
         
+    }
+    
+    @IBAction func performDifferentSegueByButtonText(sender: UIBarButtonItem) {
+        if sender.title == "Edit"{
+        performSegueWithIdentifier("ShowEditProfileSegue", sender: sender)
+        }
+        else if (sender.title == "Follow"){
+            print ("Here we click follow")
+            addFriendCall_from_url("\(serverUrl)add-friend.php")
+            
+        }
+        else if (sender.title == "Unfollow"){
+            print ("Here we click unfollow")
+            removeFriendCall_from_url("\(serverUrl)remove-friend.php")
+        }
+    }
+    
+    
+    func back(sender: UIBarButtonItem) {
+        dismissViewControllerAnimated(true, completion: nil)
     }
 
 }
