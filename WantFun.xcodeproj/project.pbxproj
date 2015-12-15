@@ -29,6 +29,7 @@
 		7BB0BF751C1EFBBD000F2EBB /* LoginTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BB0BF741C1EFBBD000F2EBB /* LoginTableViewController.swift */; };
 		7BE3BDAC1C17A0A200A9FD9E /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE3BDAB1C17A0A200A9FD9E /* Helper.swift */; };
 		7BF098B71C05C6B700CDFB3C /* EventLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF098B61C05C6B700CDFB3C /* EventLine.swift */; };
+		7BFCD1681C2042F60019F575 /* RegisterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BFCD1671C2042F60019F575 /* RegisterTableViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		7BB0BF741C1EFBBD000F2EBB /* LoginTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginTableViewController.swift; sourceTree = "<group>"; };
 		7BE3BDAB1C17A0A200A9FD9E /* Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		7BF098B61C05C6B700CDFB3C /* EventLine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventLine.swift; sourceTree = "<group>"; };
+		7BFCD1671C2042F60019F575 /* RegisterTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +143,7 @@
 				7B6EB5141C1A1FD40080A9D4 /* EditProfileTableViewController.swift */,
 				7B8E61601C1A5047009D1E52 /* FollowingUsersTableViewController.swift */,
 				7BB0BF741C1EFBBD000F2EBB /* LoginTableViewController.swift */,
+				7BFCD1671C2042F60019F575 /* RegisterTableViewController.swift */,
 			);
 			path = WantFun;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 				7B6EB5151C1A1FD40080A9D4 /* EditProfileTableViewController.swift in Sources */,
 				7BB0BF751C1EFBBD000F2EBB /* LoginTableViewController.swift in Sources */,
 				7B4B22B21C0892440078A703 /* AddEventViewController.swift in Sources */,
+				7BFCD1681C2042F60019F575 /* RegisterTableViewController.swift in Sources */,
 				7B4B22B01C0755430078A703 /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
